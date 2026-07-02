@@ -335,12 +335,22 @@
 
 <script>
 // ── КОНСТАНТЫ ──────────────────────────────────────────────
-const RSS2JSON = 'https://api.rss2json.com/v1/api.json?rss_url=';
+// RSS-ленты для парсинга
 const FEEDS = [
   'https://news.google.com/rss/search?q=%D0%9A%D0%9C%D0%9D%D0%A1+%D0%BA%D0%BE%D1%80%D0%B5%D0%BD%D0%BD%D1%8B%D0%B5+%D0%BD%D0%B0%D1%80%D0%BE%D0%B4%D1%8B+%D1%81%D0%B5%D0%B2%D0%B5%D1%80%D0%B0&hl=ru&gl=RU&ceid=RU:ru',
+  'https://news.google.com/rss/search?q=%D0%BA%D0%BE%D1%80%D0%B5%D0%BD%D0%BD%D1%8B%D0%B5+%D0%BD%D0%B0%D1%80%D0%BE%D0%B4%D1%8B+%D1%81%D0%B5%D0%B2%D0%B5%D1%80%D0%B0+%D1%8F%D0%BC%D0%B0%D0%BB+%D1%82%D0%B0%D0%B9%D0%BC%D1%8B%D1%80&hl=ru&gl=RU&ceid=RU:ru',
   'https://raipon.info/feed/',
-  'https://vesti-yamal.ru/rss/news/',
 ];
+
+// CORS-прокси (пробуем по очереди)
+const PROXIES = [
+  u => `https://api.allorigins.win/get?url=${encodeURIComponent(u)}`,
+  u => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`,
+];
+
+// Кеш в localStorage — 30 минут
+const CACHE_KEY = 'etno_news_cache';
+const CACHE_TTL = 30 * 60 * 1000;
 
 const RUBRIKA_KEYS = {
   'Культура':  ['культур','фестиваль','язык','искусств','музей','песн','танц','орнамент','бисер','ремесл','творчест','кино','книг','словар','литератур','анимац'],
@@ -363,7 +373,6 @@ const BGCLS   = ['c0','c1','c2','c3','c4','c5'];
 let allItems = [];
 
 // ── ВСПОМОГАТЕЛЬНЫЕ ────────────────────────────────────────
-function getRubrika(text) {
   const t = (text||'').toLowerCase();
   for (const [r,keys] of Object.entries(RUBRIKA_KEYS))
     if (keys.some(k => t.includes(k))) return r;
@@ -386,26 +395,70 @@ function openLink(url) {
 }
 
 // ── ЗАГРУЗКА RSS ────────────────────────────────────────────
-async function fetchFeed(url) {
-  const r = await fetch(RSS2JSON + encodeURIComponent(url) + '&count=12', {cache:'no-store'});
-  const j = await r.json();
-  return (j.status === 'ok' && j.items) ? j.items : [];
+// Получаем текст через один из CORS-прокси
+async function fetchViaProxy(rssUrl) {
+  for (const makeProxy of PROXIES) {
+    try {
+      const res = await fetch(makeProxy(rssUrl), {cache:'no-store'});
+      if (!res.ok) continue;
+      const data = await res.json();
+      // allorigins возвращает {contents:...}, codetabs возвращает строку напрямую
+      const xml = data.contents ?? data;
+      if (typeof xml === 'string' && xml.includes('<item>')) return xml;
+    } catch(e) { /* пробуем следующий прокси */ }
+  }
+  return null;
+}
+
+// Парсим RSS XML в массив объектов
+function parseRSS(xmlStr) {
+  try {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(xmlStr, 'text/xml');
+    if (doc.querySelector('parsererror')) return [];
+    return Array.from(doc.querySelectorAll('item')).map(item => {
+      const get = tag => item.querySelector(tag)?.textContent?.trim() || '';
+      // Google News прячет ссылку в guid
+      const link = get('link') || get('guid');
+      return { title: decodeEntities(get('title')), description: decodeEntities(get('description')), link, pubDate: get('pubDate'), author: get('author') };
+    });
+  } catch(e) { return []; }
+}
+
+function decodeEntities(str) {
+  const d = document.createElement('div');
+  d.innerHTML = str;
+  return d.textContent || '';
+}
+
+async function fetchFeed(rssUrl) {
+  const xml = await fetchViaProxy(rssUrl);
+  return xml ? parseRSS(xml) : [];
 }
 
 async function loadNews() {
   const btn = document.getElementById('refreshBtn');
   btn.disabled = true; btn.textContent = '⏳ Загружаю...';
+
+  // Проверяем кеш localStorage
+  try {
+    const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
+    if (cached && (Date.now() - cached.time) < CACHE_TTL) {
+      allItems = cached.items;
+      renderNews(allItems);
+      btn.disabled = false; btn.textContent = '🔄 Обновить новости';
+      return;
+    }
+  } catch(e) {}
+
   document.getElementById('loadingBanner').style.display = 'block';
   document.getElementById('pageMain').style.display = 'none';
   document.getElementById('pageAbout').classList.remove('visible');
   document.getElementById('updatedBar').style.display = 'none';
 
   let items = [];
-  const errors = [];
-
   for (const feed of FEEDS) {
-    try { items = items.concat(await fetchFeed(feed)); }
-    catch(e) { errors.push(e.message); }
+    try { items = items.concat(await fetchFeed(feed)); } catch(e) {}
   }
 
   // Дедупликация и сортировка
@@ -417,12 +470,15 @@ async function loadNews() {
 
   if (!allItems.length) {
     document.getElementById('loadingBanner').innerHTML = `
-      <p style="color:var(--red);font-size:14px;font-weight:700;">⚠️ Новости временно недоступны</p>
-      <small>Возможно, RSS-сервис перегружен. Подождите минуту и попробуйте снова.</small><br><br>
-      <button onclick="loadNews()" style="margin-top:12px;background:var(--red);border:none;border-radius:8px;color:#fff;padding:10px 24px;font-family:Montserrat,sans-serif;font-weight:700;cursor:pointer;font-size:13px;">🔄 Попробовать снова</button>`;
+      <p style="color:var(--red);font-size:14px;font-weight:700;">⚠️ Не удалось загрузить новости</p>
+      <small>Проверьте интернет-соединение и попробуйте снова</small><br><br>
+      <button onclick="loadNews()" style="margin-top:12px;background:var(--red);border:none;border-radius:8px;color:#fff;padding:10px 24px;font-family:Montserrat,sans-serif;font-weight:700;cursor:pointer;">🔄 Попробовать снова</button>`;
     btn.disabled = false; btn.textContent = '🔄 Обновить новости';
     return;
   }
+
+  // Сохраняем в кеш
+  try { localStorage.setItem(CACHE_KEY, JSON.stringify({time: Date.now(), items: allItems})); } catch(e) {}
 
   renderNews(allItems);
   btn.disabled = false; btn.textContent = '🔄 Обновить новости';
