@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ЭТНО.НОВОСТИ — Голос коренных народов Арктики, Сибири и Дальнего Востока</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Merriweather:wght@400;700&display=swap');
+  :root{--bg:#f7f3ea;--card:#fff;--border:#e8dfc8;--red:#c0392b;--blue:#1e5f8c;--ochre:#d68a1f;--green:#4a7c4e;--ink:#1a1210;--muted:#3d3020;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--ink);font-family:'Montserrat',sans-serif;min-height:100vh;}
+  body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;
+    background-image:url("data:image/svg+xml,%3Csvg width='80' height='40' viewBox='0 0 80 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 20 L20 5 L40 20 L60 5 L80 20' stroke='%23c0392b' stroke-width='1.5' fill='none' opacity='0.06'/%3E%3Cpath d='M0 30 L20 15 L40 30 L60 15 L80 30' stroke='%231e5f8c' stroke-width='1.5' fill='none' opacity='0.06'/%3E%3C/svg%3E");
+    pointer-events:none;z-index:0;}
+
+  header{position:relative;z-index:10;background:#fffaf0;
+    border-bottom:4px solid transparent;
+    border-image:linear-gradient(90deg,var(--red),var(--ochre),var(--blue),var(--green)) 1;
+    padding:0 24px;box-shadow:0 2px 12px rgba(43,36,26,.06);}
+  .header-top{display:flex;align-items:center;justify-content:space-between;padding:14px 0 10px;}
+  .logo{display:flex;align-items:center;gap:14px;}
+  .logo-icon{width:52px;height:52px;background:linear-gradient(135deg,var(--red),var(--ochre));
+    border-radius:10px;display:flex;align-items:center;justify-content:center;
+    box-shadow:0 3px 8px rgba(192,57,43,.25);padding:6px;flex-shrink:0;}
+  .logo-icon svg{width:100%;height:100%;}
+  .logo-text{font-size:22px;font-weight:900;letter-spacing:2px;color:var(--blue);}
+  .logo-slogan{font-size:11px;color:var(--muted);margin-top:3px;font-style:italic;}
+  .header-right{display:flex;flex-direction:column;align-items:flex-end;gap:5px;}
+  .header-date{font-size:11px;color:var(--muted);font-weight:600;}
+  .refresh-btn{background:linear-gradient(90deg,var(--red),var(--ochre));border:none;border-radius:20px;
+    color:#fff;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;
+    padding:5px 14px;cursor:pointer;transition:opacity .2s;}
+  .refresh-btn:hover{opacity:.85;}
+  .refresh-btn:disabled{opacity:.5;cursor:not-allowed;}
+
+  nav{display:flex;align-items:center;overflow-x:auto;scrollbar-width:none;border-top:1px solid var(--border);gap:2px;}
+  nav::-webkit-scrollbar{display:none;}
+  .nav-sep{color:var(--border);font-size:14px;flex-shrink:0;padding:0 2px;user-select:none;}
+  .nav-btn{background:none;border:none;color:var(--muted);font-family:'Montserrat',sans-serif;
+    font-size:11px;font-weight:700;letter-spacing:.5px;padding:10px 14px;cursor:pointer;
+    border-bottom:3px solid transparent;transition:all .2s;white-space:nowrap;text-transform:uppercase;}
+  .nav-btn:hover,.nav-btn.active{color:var(--red);border-bottom-color:var(--red);}
+
+  main{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:24px 16px;}
+
+  .updated-bar{font-size:11px;color:var(--muted);font-weight:600;margin-bottom:14px;
+    display:none;align-items:center;gap:6px;}
+  .updated-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+  .loading-banner{background:#fff;border:1px solid var(--border);border-radius:14px;
+    padding:40px 24px;text-align:center;margin-bottom:28px;}
+  .spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--red);
+    border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 16px;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .loading-banner p{color:var(--muted);font-size:14px;font-weight:600;}
+  .loading-banner small{color:var(--muted);font-size:11px;opacity:.7;display:block;margin-top:4px;}
+
+  .rub-desc{background:linear-gradient(90deg,rgba(192,57,43,.07),transparent);
+    border-left:4px solid var(--red);border-radius:0 8px 8px 0;
+    padding:10px 16px;margin-bottom:20px;font-size:12px;color:var(--muted);
+    font-style:italic;display:none;}
+  .rub-desc.visible{display:block;}
+
+  .hero{display:grid;grid-template-columns:1fr 340px;gap:16px;margin-bottom:28px;}
+  .hero-main{background:var(--card);border:1px solid var(--border);border-radius:14px;
+    overflow:hidden;transition:transform .2s;box-shadow:0 4px 16px rgba(43,36,26,.06);cursor:pointer;}
+  .hero-main:hover{transform:translateY(-2px);}
+  .hero-img{width:100%;height:220px;display:flex;align-items:center;justify-content:center;
+    font-size:70px;position:relative;overflow:hidden;background:linear-gradient(135deg,#fdf0d8,#f5e3c4);}
+  .ornament-strip{position:absolute;bottom:0;left:0;right:0;height:14px;
+    background:repeating-linear-gradient(45deg,var(--red) 0 10px,var(--ochre) 10px 20px,var(--blue) 20px 30px);opacity:.85;}
+  .hero-body{padding:20px;}
+  .tag{display:inline-block;background:linear-gradient(90deg,var(--red),var(--ochre));
+    color:#fff;font-size:10px;font-weight:700;letter-spacing:1px;padding:4px 12px;
+    border-radius:20px;text-transform:uppercase;margin-bottom:10px;}
+  .hero-title{font-family:'Merriweather',serif;font-size:18px;font-weight:700;
+    line-height:1.4;margin-bottom:8px;color:var(--ink);}
+  .hero-desc{font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:10px;}
+  .read-more{display:inline-block;background:var(--blue);color:#fff;font-size:11px;font-weight:700;
+    padding:7px 18px;border-radius:20px;text-decoration:none;margin-bottom:10px;transition:opacity .2s;cursor:pointer;}
+  .read-more:hover{opacity:.85;}
+  .source-link{font-size:11px;color:var(--blue);display:block;text-decoration:none;font-weight:600;margin-bottom:6px;cursor:pointer;}
+  .source-link:hover{text-decoration:underline;}
+  .meta{font-size:11px;color:var(--muted);display:flex;gap:14px;font-weight:600;flex-wrap:wrap;}
+
+  .sidebar{display:flex;flex-direction:column;gap:10px;}
+  .side-card{background:var(--card);border:1px solid var(--border);border-left:4px solid var(--blue);
+    border-radius:10px;padding:12px 14px;transition:all .2s;cursor:pointer;
+    display:flex;gap:12px;align-items:flex-start;box-shadow:0 2px 8px rgba(43,36,26,.04);}
+  .side-card:nth-child(2){border-left-color:var(--red);}
+  .side-card:nth-child(3){border-left-color:var(--ochre);}
+  .side-card:nth-child(4){border-left-color:var(--green);}
+  .side-card:hover{transform:translateX(3px);box-shadow:0 4px 14px rgba(43,36,26,.1);}
+  .side-emoji{font-size:22px;flex-shrink:0;}
+  .side-tag{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--blue);margin-bottom:3px;}
+  .side-title{font-size:12px;font-weight:700;line-height:1.3;margin-bottom:3px;color:var(--ink);}
+  .side-meta{font-size:10px;color:var(--muted);}
+
+  .section-title{font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase;
+    color:var(--ink);border-left:4px solid var(--red);padding-left:10px;margin-bottom:14px;padding-top:4px;}
+  .section-title::after{content:'';display:block;height:1px;background:var(--border);margin-top:14px;}
+
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:32px;}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;
+    cursor:pointer;transition:all .2s;box-shadow:0 2px 10px rgba(43,36,26,.05);}
+  .card:hover{transform:translateY(-4px);box-shadow:0 10px 24px rgba(43,36,26,.12);}
+  .card-img{height:100px;display:flex;align-items:center;justify-content:center;font-size:38px;}
+  .c0{background:linear-gradient(135deg,#fde4dc,#fbd0c4);}
+  .c1{background:linear-gradient(135deg,#fdf0d8,#fbe1ae);}
+  .c2{background:linear-gradient(135deg,#dceee0,#c3e3c9);}
+  .c3{background:linear-gradient(135deg,#d9e8f5,#bcd9ef);}
+  .c4{background:linear-gradient(135deg,#f0e0f0,#e2c5e8);}
+  .c5{background:linear-gradient(135deg,#fdeccb,#fbd9a0);}
+  .card-body{padding:13px;}
+  .card-tag{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;}
+  .t-kultur{color:var(--blue);}.t-prava{color:var(--ochre);}
+  .t-ekolog{color:var(--green);}.t-tradits{color:var(--red);}.t-region{color:#a85a1f;}
+  .card-title{font-size:12px;font-weight:700;line-height:1.35;margin-bottom:5px;color:var(--ink);}
+  .card-desc{font-size:11px;color:var(--muted);line-height:1.5;margin-bottom:5px;}
+  .card-source{font-size:10px;color:var(--blue);font-weight:600;margin-bottom:3px;}
+  .card-meta{font-size:10px;color:var(--muted);font-weight:600;}
+
+  .about-portal{background:linear-gradient(135deg,#fff9f0,#f0f5ff);
+    border:1px solid var(--border);border-radius:14px;padding:28px 32px;
+    margin-bottom:32px;box-shadow:0 4px 16px rgba(43,36,26,.05);}
+  .about-portal-title{font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;
+    color:var(--muted);border-left:4px solid var(--blue);padding-left:10px;margin-bottom:14px;}
+  .about-portal-text{font-size:13px;color:var(--ink);line-height:1.85;}
+  .about-portal-text p+p{margin-top:10px;}
+
+  .about-section{background:linear-gradient(135deg,#fff9f0,#f0f7ff);
+    border:1px solid var(--border);border-radius:14px;padding:28px;display:none;}
+  .about-section.visible{display:block;}
+  .about-title{font-family:'Merriweather',serif;font-size:20px;font-weight:700;
+    color:var(--ink);margin-bottom:16px;border-left:4px solid var(--blue);padding-left:12px;}
+  .about-text{font-size:13px;color:var(--muted);line-height:1.8;margin-bottom:14px;}
+  .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px;}
+  .about-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px;}
+  .about-card-title{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--red);margin-bottom:6px;}
+  .about-card-text{font-size:12px;color:var(--muted);line-height:1.6;}
+  .rub-desc-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px;}
+  .rub-item{border-left:3px solid var(--red);padding-left:12px;}
+  .rub-item:nth-child(2){border-left-color:var(--ochre);}
+  .rub-item:nth-child(3){border-left-color:var(--green);}
+  .rub-item:nth-child(4){border-left-color:var(--blue);}
+  .rub-item:nth-child(5){border-left-color:#a85a1f;}
+  .rub-item-title{font-size:12px;font-weight:800;text-transform:uppercase;color:var(--ink);margin-bottom:4px;}
+  .rub-item-text{font-size:11px;color:var(--muted);line-height:1.5;}
+
+  .disclaimer{background:#fff;border:1px solid var(--border);border-radius:12px;
+    padding:18px 22px;margin-bottom:28px;font-size:11px;color:var(--muted);line-height:1.7;}
+  .disclaimer strong{color:var(--ink);}
+  .disclaimer a{color:var(--blue);text-decoration:none;font-weight:600;}
+  .disclaimer a:hover{text-decoration:underline;}
+  .disclaimer-title{font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;
+    color:var(--muted);margin-bottom:8px;border-left:3px solid var(--ochre);padding-left:8px;}
+
+  footer{position:relative;z-index:1;background:#fffaf0;
+    border-top:4px solid transparent;
+    border-image:linear-gradient(90deg,var(--red),var(--ochre),var(--blue),var(--green)) 1;
+    padding:28px 16px;}
+  .footer-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;}
+  .footer-brand .footer-logo{font-size:17px;font-weight:900;letter-spacing:2px;color:var(--blue);margin-bottom:6px;}
+  .footer-brand p{font-size:11px;color:var(--muted);line-height:1.6;}
+  .footer-col-title{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--ink);margin-bottom:10px;}
+  .footer-col a{display:block;font-size:11px;color:var(--muted);text-decoration:none;margin-bottom:5px;transition:color .2s;cursor:pointer;}
+  .footer-col a:hover{color:var(--red);}
+  .footer-contacts a{font-size:11px;color:var(--blue);text-decoration:none;font-weight:600;}
+  .footer-contacts a:hover{text-decoration:underline;}
+  .footer-contacts p{font-size:11px;color:var(--muted);margin-bottom:5px;line-height:1.6;}
+  .footer-bottom{max-width:1100px;margin:20px auto 0;padding-top:14px;
+    border-top:1px solid var(--border);text-align:center;font-size:10px;color:var(--muted);}
+
+  @media(max-width:700px){.hero{grid-template-columns:1fr;}.grid{grid-template-columns:1fr 1fr;}
+    .footer-inner{grid-template-columns:1fr;}.about-grid,.rub-desc-grid{grid-template-columns:1fr;}}
+  @media(max-width:480px){.grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+          <path d="M32 14 L18 50 L46 50 Z" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round"/>
+          <line x1="32" y1="14" x2="26" y2="50" stroke="#fff" stroke-width="1.3" opacity="0.7"/>
+          <line x1="32" y1="14" x2="38" y2="50" stroke="#fff" stroke-width="1.3" opacity="0.7"/>
+          <line x1="32" y1="14" x2="22" y2="44" stroke="#fff" stroke-width="1" opacity="0.5"/>
+          <line x1="32" y1="14" x2="42" y2="44" stroke="#fff" stroke-width="1" opacity="0.5"/>
+          <g transform="translate(2,38) scale(0.62)">
+            <path d="M2 18 Q0 10 4 4 M2 18 Q5 9 9 5" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+            <path d="M4 4 L1 1 M4 4 L7 2 M9 5 L7 1 M9 5 L12 3" stroke="#fff" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+            <ellipse cx="10" cy="22" rx="9" ry="5" fill="#fff"/>
+            <circle cx="2" cy="18" r="3.2" fill="#fff"/>
+            <line x1="3" y1="26" x2="2" y2="32" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+            <line x1="9" y1="27" x2="9" y2="33" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+            <line x1="16" y1="26" x2="17" y2="32" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+          </g>
+          <g transform="translate(44,30)">
+            <circle cx="6" cy="2" r="3.4" fill="#fff"/>
+            <path d="M0 22 Q-1 10 6 9 Q13 10 12 22 Z" fill="#fff"/>
+            <line x1="2" y1="22" x2="1" y2="28" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+            <line x1="10" y1="22" x2="11" y2="28" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+          </g>
+        </svg>
+      </div>
+      <div>
+        <div class="logo-text">ЭТНО.НОВОСТИ</div>
+        <div class="logo-slogan">Голос коренных народов Арктики, Сибири и Дальнего Востока России</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="header-date" id="hdate"></div>
+      <button class="refresh-btn" id="refreshBtn" onclick="loadNews()">🔄 Обновить новости</button>
+    </div>
+  </div>
+  <nav>
+    <button class="nav-btn active" onclick="showPage('main',this)">Главная</button>
+    <span class="nav-sep">·</span>
+    <button class="nav-btn" onclick="showPage('kultura',this)">Культура</button>
+    <span class="nav-sep">·</span>
+    <button class="nav-btn" onclick="showPage('prava',this)">Права</button>
+    <span class="nav-sep">·</span>
+    <button class="nav-btn" onclick="showPage('ekolog',this)">Экология</button>
+    <span class="nav-sep">·</span>
+    <button class="nav-btn" onclick="showPage('tradits',this)">Традиции</button>
+    <span class="nav-sep">·</span>
+    <button class="nav-btn" onclick="showPage('region',this)">Регионы</button>
+    <span class="nav-sep">·</span>
+    <button class="nav-btn" onclick="showPage('about',this)">О нас</button>
+  </nav>
+</header>
+
+<main>
+  <div class="rub-desc" id="rubDesc"></div>
+  <div id="updatedBar" class="updated-bar">
+    <div class="updated-dot"></div>
+    <span id="updatedText"></span>
+  </div>
+
+  <div id="loadingBanner" class="loading-banner">
+    <div class="spinner"></div>
+    <p>Загружаем свежие новости о КМНС...</p>
+    <small>Читаем RSS-ленты новостей — займёт несколько секунд</small>
+  </div>
+
+  <div id="pageMain" style="display:none">
+    <div class="hero">
+      <div class="hero-main" id="heroCard">
+        <div class="hero-img"><div class="ornament-strip"></div><span id="heroEmoji">🦌</span></div>
+        <div class="hero-body">
+          <span class="tag" id="heroRubrika">Главная тема</span>
+          <h2 class="hero-title" id="heroTitle"></h2>
+          <p class="hero-desc" id="heroDesc"></p>
+          <span class="read-more" id="heroReadMore">Читать полностью →</span>
+          <span class="source-link" id="heroSource"></span>
+          <div class="meta"><span id="heroDate"></span><span id="heroAuthor"></span></div>
+        </div>
+      </div>
+      <div class="sidebar" id="sidebar"></div>
+    </div>
+
+    <div class="section-title">Последние новости</div>
+    <div class="grid" id="grid"></div>
+
+    <div class="about-portal">
+      <div class="about-portal-title">О портале</div>
+      <div class="about-portal-text">
+        <p>«ЭТНО.НОВОСТИ» — медиа о жизни, правах и традициях коренных малочисленных народов Севера, Сибири и Дальнего Востока России. Мы рассказываем о людях и общинах, которые сохраняют язык, культуру и связь с родной землёй, и внимательно следим за решениями, влияющими на их будущее.</p>
+        <p>На портале выходят новости, репортажи, истории и аналитика о традиционных промыслах, экологии Арктики, законодательных изменениях и культурных инициативах в регионах. Наша задача — дать звучать голосу коренных народов и сделать сложные темы понятными и честными.</p>
+      </div>
+    </div>
+
+    <div class="disclaimer">
+      <div class="disclaimer-title">📌 Источники материалов</div>
+      Новости агрегируются автоматически из RSS-лент открытых СМИ:
+      <a href="https://news.google.com" target="_blank">Google Новости</a> ·
+      <a href="https://raipon.info" target="_blank">RAIPON</a> ·
+      <a href="https://vesti-yamal.ru" target="_blank">Вести Ямал</a> ·
+      <a href="https://tass.ru" target="_blank">ТАСС</a> и другие.
+      Публикуются краткие анонсы со ссылкой на первоисточник (ст. 1274 ГК РФ). Все права на оригинальные тексты принадлежат авторам. При использовании материалов <strong>ссылка на ЭТНО.НОВОСТИ обязательна</strong> · 16+
+    </div>
+  </div>
+
+  <div class="about-section" id="pageAbout">
+    <div class="about-title">О портале «ЭТНО.НОВОСТИ»</div>
+    <div class="about-text">«ЭТНО.НОВОСТИ» — независимый информационный портал о коренных малочисленных народах Севера, Сибири и Дальнего Востока России. Мы рассказываем о людях, которые сохраняют язык, культуру, традиционные промыслы и связь с родной землёй.</div>
+    <div class="about-text">Наша цель — дать голос общинам и активистам, освещать важные решения, влияющие на традиционные территории, и показывать, как коренные народы развиваются сегодня.</div>
+    <div class="about-text">Мы открыты к сотрудничеству с общинами, НКО, исследователями и журналистами. Если вы хотите поделиться новостью — напишите нам: <a href="mailto:pimenovadianaviktoria@gmail.com">pimenovadianaviktoria@gmail.com</a></div>
+    <div class="about-grid">
+      <div class="about-card"><div class="about-card-title">📋 Редакционная политика</div><div class="about-card-text">Публикуем только проверенные факты со ссылкой на первоисточник. Новости обновляются автоматически из RSS-лент надёжных СМИ.</div></div>
+      <div class="about-card"><div class="about-card-title">🤝 Партнёрство</div><div class="about-card-text">Открыты к сотрудничеству с НКО, общинами КМНС, местными администрациями и грантовыми фондами.</div></div>
+      <div class="about-card"><div class="about-card-title">📬 Прислать новость</div><div class="about-card-text">Пишите на <a href="mailto:pimenovadianaviktoria@gmail.com">pimenovadianaviktoria@gmail.com</a> — рассматриваем все материалы.</div></div>
+      <div class="about-card"><div class="about-card-title">🌍 Наши народы</div><div class="about-card-text">Долганы, эвенки, эвены, ненцы, ханты, манси, нивхи, чукчи и другие народы Севера, Сибири и Дальнего Востока.</div></div>
+    </div>
+    <br>
+    <div class="section-title">Наши рубрики</div>
+    <div class="rub-desc-grid">
+      <div class="rub-item"><div class="rub-item-title">🎭 Культура</div><div class="rub-item-text">Язык, искусство, ремёсла, фестивали, выставки и проекты по сохранению культурного наследия.</div></div>
+      <div class="rub-item"><div class="rub-item-title">⚖️ Права</div><div class="rub-item-text">Законы, судебные решения, защита традиционных территорий и международные форумы.</div></div>
+      <div class="rub-item"><div class="rub-item-title">🌿 Экология</div><div class="rub-item-text">Состояние природы, влияние промышленности и экологические инициативы общин.</div></div>
+      <div class="rub-item"><div class="rub-item-title">🪘 Традиции</div><div class="rub-item-text">Обряды, праздники, шаманские практики и традиции, передаваемые из поколения в поколение.</div></div>
+      <div class="rub-item"><div class="rub-item-title">🏔️ Регионы</div><div class="rub-item-text">Новости из Ямала, Таймыра, Якутии, Камчатки, Сахалина и других северных территорий.</div></div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="footer-logo">ЭТНО.НОВОСТИ</div>
+      <p>Голос коренных народов Арктики, Сибири и Дальнего Востока России.<br>Новости обновляются автоматически из RSS-лент.</p>
+    </div>
+    <div class="footer-col">
+      <div class="footer-col-title">Разделы</div>
+      <a onclick="showPage('kultura',null)">Культура</a>
+      <a onclick="showPage('prava',null)">Права</a>
+      <a onclick="showPage('ekolog',null)">Экология</a>
+      <a onclick="showPage('tradits',null)">Традиции</a>
+      <a onclick="showPage('region',null)">Регионы</a>
+      <a onclick="showPage('about',null)">О нас</a>
+    </div>
+    <div class="footer-col footer-contacts">
+      <div class="footer-col-title">Контакты редакции</div>
+      <p>✉️ <a href="mailto:pimenovadianaviktoria@gmail.com">pimenovadianaviktoria@gmail.com</a></p>
+      <p style="margin-top:8px;">Если вы хотите поделиться новостью, историей общины или предложить сотрудничество — напишите нам. Мы внимательно читаем все письма.</p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    © 2026 «ЭТНО.НОВОСТИ» · Все права защищены · Материалы публикуются со ссылкой на первоисточник (ст. 1274 ГК РФ) · 16+
+  </div>
+</footer>
+
+<script>
+// ── КОНСТАНТЫ ──────────────────────────────────────────────
+const RSS2JSON = 'https://api.rss2json.com/v1/api.json?rss_url=';
+const FEEDS = [
+  'https://news.google.com/rss/search?q=%D0%9A%D0%9C%D0%9D%D0%A1+%D0%BA%D0%BE%D1%80%D0%B5%D0%BD%D0%BD%D1%8B%D0%B5+%D0%BD%D0%B0%D1%80%D0%BE%D0%B4%D1%8B+%D1%81%D0%B5%D0%B2%D0%B5%D1%80%D0%B0&hl=ru&gl=RU&ceid=RU:ru',
+  'https://raipon.info/feed/',
+  'https://vesti-yamal.ru/rss/news/',
+];
+
+const RUBRIKA_KEYS = {
+  'Культура':  ['культур','фестиваль','язык','искусств','музей','песн','танц','орнамент','бисер','ремесл','творчест','кино','книг','словар','литератур','анимац'],
+  'Традиции':  ['обряд','праздник','шаман','оленевод','чум','нарт','охот','рыбол','кочев','стойбищ','ягель','традицион'],
+  'Экология':  ['эколог','природ','пастбищ','нефт','загрязн','заповедн','арктик','тундр','климат','рыб','квот','водн','биоресурс'],
+  'Права':     ['прав','закон','госдум','конституц','федерал','реестр','льгот','компенсац','суд','иск','фадн','поправк','беззаявит'],
+  'Регионы':   ['ямал','таймыр','якут','сахалин','чукот','ханты-мансий','красноярск','хабаровск','магадан','камчатк','ненецк','норильск','дудинк'],
+};
+const RUB_DESCS = {
+  'Культура': '🎭 Культура — истории о языке, искусстве, ремёслах и творчестве народов Севера.',
+  'Права':    '⚖️ Права — законы и решения, влияющие на жизнь КМНС: защита территорий, право на природопользование.',
+  'Экология': '🌿 Экология — состояние природы родных земель и участие общин в экологических решениях.',
+  'Традиции': '🪘 Традиции — обряды, праздники и обычаи, передающиеся из поколения в поколение.',
+  'Регионы':  '🏔️ Регионы — новости из Ямала, Таймыра, Якутии, Камчатки, Сахалина и других северных территорий.',
+};
+const EMOJIS  = {'Культура':'🎭','Традиции':'🪘','Права':'⚖️','Экология':'🌿','Регионы':'🏔️','Новости':'📰'};
+const TAGCLS  = {'Культура':'t-kultur','Традиции':'t-tradits','Права':'t-prava','Экология':'t-ekolog','Регионы':'t-region','Новости':'t-kultur'};
+const BGCLS   = ['c0','c1','c2','c3','c4','c5'];
+
+let allItems = [];
+
+// ── ВСПОМОГАТЕЛЬНЫЕ ────────────────────────────────────────
+function getRubrika(text) {
+  const t = (text||'').toLowerCase();
+  for (const [r,keys] of Object.entries(RUBRIKA_KEYS))
+    if (keys.some(k => t.includes(k))) return r;
+  return 'Новости';
+}
+function cleanDesc(html) {
+  const d = document.createElement('div'); d.innerHTML = html||'';
+  return (d.textContent||'').replace(/\s+/g,' ').trim().slice(0,220)+'…';
+}
+function fmtDate(s) {
+  if (!s) return '';
+  try { return new Date(s).toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'}); }
+  catch { return s; }
+}
+function getHost(url) {
+  try { return new URL(url).hostname.replace('www.',''); } catch { return ''; }
+}
+function openLink(url) {
+  if (url && url !== '#') window.open(url,'_blank','noopener,noreferrer');
+}
+
+// ── ЗАГРУЗКА RSS ────────────────────────────────────────────
+async function fetchFeed(url) {
+  const r = await fetch(RSS2JSON + encodeURIComponent(url) + '&count=12', {cache:'no-store'});
+  const j = await r.json();
+  return (j.status === 'ok' && j.items) ? j.items : [];
+}
+
+async function loadNews() {
+  const btn = document.getElementById('refreshBtn');
+  btn.disabled = true; btn.textContent = '⏳ Загружаю...';
+  document.getElementById('loadingBanner').style.display = 'block';
+  document.getElementById('pageMain').style.display = 'none';
+  document.getElementById('pageAbout').classList.remove('visible');
+  document.getElementById('updatedBar').style.display = 'none';
+
+  let items = [];
+  const errors = [];
+
+  for (const feed of FEEDS) {
+    try { items = items.concat(await fetchFeed(feed)); }
+    catch(e) { errors.push(e.message); }
+  }
+
+  // Дедупликация и сортировка
+  const seen = new Set();
+  allItems = items
+    .filter(i => { if (!i.title || seen.has(i.title)) return false; seen.add(i.title); return true; })
+    .sort((a,b) => new Date(b.pubDate||0) - new Date(a.pubDate||0))
+    .slice(0, 12);
+
+  if (!allItems.length) {
+    document.getElementById('loadingBanner').innerHTML = `
+      <p style="color:var(--red);font-size:14px;font-weight:700;">⚠️ Новости временно недоступны</p>
+      <small>Возможно, RSS-сервис перегружен. Подождите минуту и попробуйте снова.</small><br><br>
+      <button onclick="loadNews()" style="margin-top:12px;background:var(--red);border:none;border-radius:8px;color:#fff;padding:10px 24px;font-family:Montserrat,sans-serif;font-weight:700;cursor:pointer;font-size:13px;">🔄 Попробовать снова</button>`;
+    btn.disabled = false; btn.textContent = '🔄 Обновить новости';
+    return;
+  }
+
+  renderNews(allItems);
+  btn.disabled = false; btn.textContent = '🔄 Обновить новости';
+}
+
+// ── РЕНДЕР ─────────────────────────────────────────────────
+function renderNews(items) {
+  if (!items.length) return;
+  const h = items[0];
+  const hR = getRubrika(h.title + ' ' + (h.description||''));
+
+  document.getElementById('heroEmoji').textContent   = EMOJIS[hR]||'📰';
+  document.getElementById('heroRubrika').textContent = hR;
+  document.getElementById('heroTitle').textContent   = h.title;
+  document.getElementById('heroDesc').textContent    = cleanDesc(h.description);
+  document.getElementById('heroReadMore').onclick    = () => openLink(h.link);
+  document.getElementById('heroSource').textContent  = '📎 Источник: ' + (h.author||getHost(h.link));
+  document.getElementById('heroSource').onclick      = () => openLink(h.link);
+  document.getElementById('heroCard').onclick        = () => openLink(h.link);
+  document.getElementById('heroDate').textContent    = '🕐 ' + fmtDate(h.pubDate);
+  document.getElementById('heroAuthor').textContent  = '📰 ' + (h.author||getHost(h.link));
+
+  // Сайдбар
+  const sb = document.getElementById('sidebar'); sb.innerHTML = '';
+  items.slice(1,5).forEach(n => {
+    const r = getRubrika(n.title + ' ' + (n.description||''));
+    const el = document.createElement('div');
+    el.className = 'side-card';
+    el.onclick = () => openLink(n.link);
+    el.innerHTML = `<div class="side-emoji">${EMOJIS[r]||'📰'}</div>
+      <div><div class="side-tag">${r}</div>
+      <div class="side-title">${n.title}</div>
+      <div class="side-meta">${fmtDate(n.pubDate)} · ${n.author||getHost(n.link)}</div></div>`;
+    sb.appendChild(el);
+  });
+
+  // Сетка
+  const grid = document.getElementById('grid'); grid.innerHTML = '';
+  items.slice(1,7).forEach((n,i) => {
+    const r = getRubrika(n.title + ' ' + (n.description||''));
+    const el = document.createElement('div');
+    el.className = 'card';
+    el.onclick = () => openLink(n.link);
+    el.innerHTML = `<div class="card-img ${BGCLS[i]}">${EMOJIS[r]||'📰'}</div>
+      <div class="card-body">
+        <div class="card-tag ${TAGCLS[r]||'t-kultur'}">${r}</div>
+        <div class="card-title">${n.title}</div>
+        <div class="card-desc">${cleanDesc(n.description)}</div>
+        <div class="card-source">📎 ${n.author||getHost(n.link)}</div>
+        <div class="card-meta">🕐 ${fmtDate(n.pubDate)}</div>
+      </div>`;
+    grid.appendChild(el);
+  });
+
+  document.getElementById('loadingBanner').style.display = 'none';
+  document.getElementById('pageMain').style.display = 'block';
+  const bar = document.getElementById('updatedBar');
+  bar.style.display = 'flex';
+  document.getElementById('updatedText').textContent =
+    'Обновлено в ' + new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
+}
+
+// ── НАВИГАЦИЯ ───────────────────────────────────────────────
+function showPage(page, btn) {
+  if (btn) {
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+  document.getElementById('pageMain').style.display = 'none';
+  document.getElementById('pageAbout').classList.remove('visible');
+  document.getElementById('rubDesc').classList.remove('visible');
+
+  if (page === 'main') {
+    document.getElementById('pageMain').style.display = 'block';
+  } else if (page === 'about') {
+    document.getElementById('pageAbout').classList.add('visible');
+  } else {
+    document.getElementById('pageMain').style.display = 'block';
+    const rubName = {kultura:'Культура',prava:'Права',ekolog:'Экология',tradits:'Традиции',region:'Регионы'}[page];
+    if (rubName && RUB_DESCS[rubName]) {
+      const desc = document.getElementById('rubDesc');
+      desc.textContent = RUB_DESCS[rubName];
+      desc.classList.add('visible');
+    }
+    const filtered = allItems.filter(i => getRubrika(i.title+' '+(i.description||'')) === rubName);
+    renderNews(filtered.length ? filtered : allItems);
+  }
+}
+
+// ── ИНИЦИАЛИЗАЦИЯ ───────────────────────────────────────────
+document.getElementById('hdate').textContent =
+  new Date().toLocaleDateString('ru-RU',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+loadNews();
+</script>
+</body>
+</html>
