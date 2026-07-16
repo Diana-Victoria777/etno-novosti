@@ -78,9 +78,10 @@
     line-height:1.4;margin-bottom:8px;color:var(--ink);}
   .hero-desc{font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:10px;}
   .read-more{display:inline-block;background:var(--blue);color:#fff;font-size:11px;font-weight:700;
-    padding:7px 18px;border-radius:20px;text-decoration:none;margin-bottom:10px;transition:opacity .2s;cursor:pointer;}
+    padding:7px 18px;border-radius:20px;text-decoration:none;margin-bottom:10px;transition:opacity .2s;}
   .read-more:hover{opacity:.85;}
-  .source-link{font-size:11px;color:var(--blue);display:block;text-decoration:none;font-weight:600;margin-bottom:6px;cursor:pointer;}
+  .source-link{font-size:11px;color:var(--blue);display:block;text-decoration:none;
+    font-weight:600;margin-bottom:6px;cursor:pointer;}
   .source-link:hover{text-decoration:underline;}
   .meta{font-size:11px;color:var(--muted);display:flex;gap:14px;font-weight:600;flex-wrap:wrap;}
 
@@ -178,7 +179,6 @@
 </style>
 </head>
 <body>
-
 <header>
   <div class="header-top">
     <div class="logo">
@@ -213,7 +213,7 @@
     </div>
     <div class="header-right">
       <div class="header-date" id="hdate"></div>
-      <button class="refresh-btn" id="refreshBtn" onclick="loadNews()">🔄 Обновить новости</button>
+      <button class="refresh-btn" id="refreshBtn" onclick="loadNews(true)">🔄 Обновить</button>
     </div>
   </div>
   <nav>
@@ -239,11 +239,10 @@
     <div class="updated-dot"></div>
     <span id="updatedText"></span>
   </div>
-
   <div id="loadingBanner" class="loading-banner">
     <div class="spinner"></div>
     <p>Загружаем свежие новости о КМНС...</p>
-    <small>Читаем RSS-ленты новостей — займёт несколько секунд</small>
+    <small>Обычно это занимает 3–5 секунд</small>
   </div>
 
   <div id="pageMain" style="display:none">
@@ -268,41 +267,39 @@
     <div class="about-portal">
       <div class="about-portal-title">О портале</div>
       <div class="about-portal-text">
-        <p>«ЭТНО.НОВОСТИ» — медиа о жизни, правах и традициях коренных малочисленных народов Севера, Сибири и Дальнего Востока России. Мы рассказываем о людях и общинах, которые сохраняют язык, культуру и связь с родной землёй, и внимательно следим за решениями, влияющими на их будущее.</p>
-        <p>На портале выходят новости, репортажи, истории и аналитика о традиционных промыслах, экологии Арктики, законодательных изменениях и культурных инициативах в регионах. Наша задача — дать звучать голосу коренных народов и сделать сложные темы понятными и честными.</p>
+        <p>«ЭТНО.НОВОСТИ» — медиа о жизни, правах и традициях коренных малочисленных народов Севера, Сибири и Дальнего Востока России. Мы рассказываем о людях и общинах, которые сохраняют язык, культуру и связь с родной землёй.</p>
+        <p>На портале выходят новости, репортажи и аналитика о традиционных промыслах, экологии Арктики, законодательных изменениях и культурных инициативах. Наша задача — дать звучать голосу коренных народов.</p>
       </div>
     </div>
 
     <div class="disclaimer">
       <div class="disclaimer-title">📌 Источники материалов</div>
-      Новости агрегируются автоматически из RSS-лент открытых СМИ:
-      <a href="https://news.google.com" target="_blank">Google Новости</a> ·
+      Новости агрегируются автоматически из RSS-лент:
       <a href="https://raipon.info" target="_blank">RAIPON</a> ·
-      <a href="https://vesti-yamal.ru" target="_blank">Вести Ямал</a> ·
-      <a href="https://tass.ru" target="_blank">ТАСС</a> и другие.
-      Публикуются краткие анонсы со ссылкой на первоисточник (ст. 1274 ГК РФ). Все права на оригинальные тексты принадлежат авторам. При использовании материалов <strong>ссылка на ЭТНО.НОВОСТИ обязательна</strong> · 16+
+      <a href="https://news.google.com" target="_blank">Google Новости</a> и другие открытые СМИ.
+      Публикуются анонсы со ссылкой на первоисточник (ст. 1274 ГК РФ). При использовании материалов <strong>ссылка на ЭТНО.НОВОСТИ обязательна</strong> · 16+
     </div>
   </div>
 
   <div class="about-section" id="pageAbout">
     <div class="about-title">О портале «ЭТНО.НОВОСТИ»</div>
-    <div class="about-text">«ЭТНО.НОВОСТИ» — независимый информационный портал о коренных малочисленных народах Севера, Сибири и Дальнего Востока России. Мы рассказываем о людях, которые сохраняют язык, культуру, традиционные промыслы и связь с родной землёй.</div>
-    <div class="about-text">Наша цель — дать голос общинам и активистам, освещать важные решения, влияющие на традиционные территории, и показывать, как коренные народы развиваются сегодня.</div>
-    <div class="about-text">Мы открыты к сотрудничеству с общинами, НКО, исследователями и журналистами. Если вы хотите поделиться новостью — напишите нам: <a href="mailto:pimenovadianaviktoria@gmail.com">pimenovadianaviktoria@gmail.com</a></div>
+    <div class="about-text">«ЭТНО.НОВОСТИ» — независимый информационный портал о коренных малочисленных народах Севера, Сибири и Дальнего Востока России.</div>
+    <div class="about-text">Наша цель — дать голос общинам и активистам, освещать важные решения, влияющие на традиционные территории.</div>
+    <div class="about-text">Мы открыты к сотрудничеству. Пишите: <a href="mailto:pimenovadianaviktoria@gmail.com">pimenovadianaviktoria@gmail.com</a></div>
     <div class="about-grid">
-      <div class="about-card"><div class="about-card-title">📋 Редакционная политика</div><div class="about-card-text">Публикуем только проверенные факты со ссылкой на первоисточник. Новости обновляются автоматически из RSS-лент надёжных СМИ.</div></div>
-      <div class="about-card"><div class="about-card-title">🤝 Партнёрство</div><div class="about-card-text">Открыты к сотрудничеству с НКО, общинами КМНС, местными администрациями и грантовыми фондами.</div></div>
-      <div class="about-card"><div class="about-card-title">📬 Прислать новость</div><div class="about-card-text">Пишите на <a href="mailto:pimenovadianaviktoria@gmail.com">pimenovadianaviktoria@gmail.com</a> — рассматриваем все материалы.</div></div>
-      <div class="about-card"><div class="about-card-title">🌍 Наши народы</div><div class="about-card-text">Долганы, эвенки, эвены, ненцы, ханты, манси, нивхи, чукчи и другие народы Севера, Сибири и Дальнего Востока.</div></div>
+      <div class="about-card"><div class="about-card-title">📋 Редакционная политика</div><div class="about-card-text">Публикуем только проверенные факты со ссылкой на первоисточник. Новости обновляются автоматически.</div></div>
+      <div class="about-card"><div class="about-card-title">🤝 Партнёрство</div><div class="about-card-text">Открыты к сотрудничеству с НКО, общинами КМНС и местными администрациями.</div></div>
+      <div class="about-card"><div class="about-card-title">📬 Прислать новость</div><div class="about-card-text">Пишите на <a href="mailto:pimenovadianaviktoria@gmail.com">pimenovadianaviktoria@gmail.com</a></div></div>
+      <div class="about-card"><div class="about-card-title">🌍 Наши народы</div><div class="about-card-text">Долганы, эвенки, эвены, ненцы, ханты, манси, нивхи, чукчи и другие народы Севера.</div></div>
     </div>
     <br>
     <div class="section-title">Наши рубрики</div>
     <div class="rub-desc-grid">
-      <div class="rub-item"><div class="rub-item-title">🎭 Культура</div><div class="rub-item-text">Язык, искусство, ремёсла, фестивали, выставки и проекты по сохранению культурного наследия.</div></div>
-      <div class="rub-item"><div class="rub-item-title">⚖️ Права</div><div class="rub-item-text">Законы, судебные решения, защита традиционных территорий и международные форумы.</div></div>
-      <div class="rub-item"><div class="rub-item-title">🌿 Экология</div><div class="rub-item-text">Состояние природы, влияние промышленности и экологические инициативы общин.</div></div>
-      <div class="rub-item"><div class="rub-item-title">🪘 Традиции</div><div class="rub-item-text">Обряды, праздники, шаманские практики и традиции, передаваемые из поколения в поколение.</div></div>
-      <div class="rub-item"><div class="rub-item-title">🏔️ Регионы</div><div class="rub-item-text">Новости из Ямала, Таймыра, Якутии, Камчатки, Сахалина и других северных территорий.</div></div>
+      <div class="rub-item"><div class="rub-item-title">🎭 Культура</div><div class="rub-item-text">Язык, искусство, ремёсла, фестивали и проекты по сохранению наследия.</div></div>
+      <div class="rub-item"><div class="rub-item-title">⚖️ Права</div><div class="rub-item-text">Законы, решения, защита территорий и международные форумы.</div></div>
+      <div class="rub-item"><div class="rub-item-title">🌿 Экология</div><div class="rub-item-text">Состояние природы, влияние промышленности и экологические инициативы.</div></div>
+      <div class="rub-item"><div class="rub-item-title">🪘 Традиции</div><div class="rub-item-text">Обряды, праздники и обычаи, передающиеся из поколения в поколение.</div></div>
+      <div class="rub-item"><div class="rub-item-title">🏔️ Регионы</div><div class="rub-item-text">Новости из Ямала, Таймыра, Якутии, Камчатки и других северных территорий.</div></div>
     </div>
   </div>
 </main>
@@ -311,7 +308,7 @@
   <div class="footer-inner">
     <div class="footer-brand">
       <div class="footer-logo">ЭТНО.НОВОСТИ</div>
-      <p>Голос коренных народов Арктики, Сибири и Дальнего Востока России.<br>Новости обновляются автоматически из RSS-лент.</p>
+      <p>Голос коренных народов Арктики, Сибири и Дальнего Востока России.</p>
     </div>
     <div class="footer-col">
       <div class="footer-col-title">Разделы</div>
@@ -325,7 +322,7 @@
     <div class="footer-col footer-contacts">
       <div class="footer-col-title">Контакты редакции</div>
       <p>✉️ <a href="mailto:pimenovadianaviktoria@gmail.com">pimenovadianaviktoria@gmail.com</a></p>
-      <p style="margin-top:8px;">Если вы хотите поделиться новостью, историей общины или предложить сотрудничество — напишите нам. Мы внимательно читаем все письма.</p>
+      <p style="margin-top:8px;">Если вы хотите поделиться новостью или предложить сотрудничество — напишите нам.</p>
     </div>
   </div>
   <div class="footer-bottom">
@@ -334,51 +331,33 @@
 </footer>
 
 <script>
-// ── КОНСТАНТЫ ──────────────────────────────────────────────
-// RSS-ленты для парсинга
-const FEEDS = [
-  'https://news.google.com/rss/search?q=%D0%9A%D0%9C%D0%9D%D0%A1+%D0%BA%D0%BE%D1%80%D0%B5%D0%BD%D0%BD%D1%8B%D0%B5+%D0%BD%D0%B0%D1%80%D0%BE%D0%B4%D1%8B+%D1%81%D0%B5%D0%B2%D0%B5%D1%80%D0%B0&hl=ru&gl=RU&ceid=RU:ru',
-  'https://news.google.com/rss/search?q=%D0%BA%D0%BE%D1%80%D0%B5%D0%BD%D0%BD%D1%8B%D0%B5+%D0%BD%D0%B0%D1%80%D0%BE%D0%B4%D1%8B+%D1%81%D0%B5%D0%B2%D0%B5%D1%80%D0%B0+%D1%8F%D0%BC%D0%B0%D0%BB+%D1%82%D0%B0%D0%B9%D0%BC%D1%8B%D1%80&hl=ru&gl=RU&ceid=RU:ru',
-  'https://raipon.info/feed/',
-];
-
-// CORS-прокси (пробуем по очереди)
-const PROXIES = [
-  u => `https://api.allorigins.win/get?url=${encodeURIComponent(u)}`,
-  u => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`,
-];
-
-// Кеш в localStorage — 30 минут
-const CACHE_KEY = 'etno_news_cache';
-const CACHE_TTL = 30 * 60 * 1000;
-
 const RUBRIKA_KEYS = {
-  'Культура':  ['культур','фестиваль','язык','искусств','музей','песн','танц','орнамент','бисер','ремесл','творчест','кино','книг','словар','литератур','анимац'],
-  'Традиции':  ['обряд','праздник','шаман','оленевод','чум','нарт','охот','рыбол','кочев','стойбищ','ягель','традицион'],
-  'Экология':  ['эколог','природ','пастбищ','нефт','загрязн','заповедн','арктик','тундр','климат','рыб','квот','водн','биоресурс'],
-  'Права':     ['прав','закон','госдум','конституц','федерал','реестр','льгот','компенсац','суд','иск','фадн','поправк','беззаявит'],
-  'Регионы':   ['ямал','таймыр','якут','сахалин','чукот','ханты-мансий','красноярск','хабаровск','магадан','камчатк','ненецк','норильск','дудинк'],
+  'Культура':  ['культур','фестиваль','язык','искусств','музей','песн','танц','орнамент','бисер','ремесл','творчест','кино','книг','словар'],
+  'Традиции':  ['обряд','праздник','шаман','оленевод','чум','нарт','охот','рыбол','кочев','стойбищ','традицион'],
+  'Экология':  ['эколог','природ','нефт','загрязн','заповедн','арктик','тундр','климат','рыб','квот','биоресурс'],
+  'Права':     ['прав','закон','госдум','федерал','реестр','льгот','суд','иск','фадн','поправк'],
+  'Регионы':   ['ямал','таймыр','якут','сахалин','чукот','красноярск','хабаровск','камчатк','ненецк','норильск','дудинк'],
 };
 const RUB_DESCS = {
-  'Культура': '🎭 Культура — истории о языке, искусстве, ремёслах и творчестве народов Севера.',
-  'Права':    '⚖️ Права — законы и решения, влияющие на жизнь КМНС: защита территорий, право на природопользование.',
-  'Экология': '🌿 Экология — состояние природы родных земель и участие общин в экологических решениях.',
-  'Традиции': '🪘 Традиции — обряды, праздники и обычаи, передающиеся из поколения в поколение.',
-  'Регионы':  '🏔️ Регионы — новости из Ямала, Таймыра, Якутии, Камчатки, Сахалина и других северных территорий.',
+  'Культура': '🎭 Культура — истории о языке, искусстве и творчестве народов Севера.',
+  'Права':    '⚖️ Права — законы и решения, влияющие на жизнь КМНС.',
+  'Экология': '🌿 Экология — состояние природы и участие общин в экологических решениях.',
+  'Традиции': '🪘 Традиции — обряды и обычаи, передающиеся из поколения в поколение.',
+  'Регионы':  '🏔️ Регионы — новости из Ямала, Таймыра, Якутии и других северных территорий.',
 };
-const EMOJIS  = {'Культура':'🎭','Традиции':'🪘','Права':'⚖️','Экология':'🌿','Регионы':'🏔️','Новости':'📰'};
-const TAGCLS  = {'Культура':'t-kultur','Традиции':'t-tradits','Права':'t-prava','Экология':'t-ekolog','Регионы':'t-region','Новости':'t-kultur'};
-const BGCLS   = ['c0','c1','c2','c3','c4','c5'];
+const EMOJIS = {'Культура':'🎭','Традиции':'🪘','Права':'⚖️','Экология':'🌿','Регионы':'🏔️','Новости':'📰'};
+const TAGCLS = {'Культура':'t-kultur','Традиции':'t-tradits','Права':'t-prava','Экология':'t-ekolog','Регионы':'t-region','Новости':'t-kultur'};
+const BGCLS  = ['c0','c1','c2','c3','c4','c5'];
 
 let allItems = [];
 
-// ── ВСПОМОГАТЕЛЬНЫЕ ────────────────────────────────────────
+function getRubrika(text) {
   const t = (text||'').toLowerCase();
   for (const [r,keys] of Object.entries(RUBRIKA_KEYS))
     if (keys.some(k => t.includes(k))) return r;
   return 'Новости';
 }
-function cleanDesc(html) {
+function clean(html) {
   const d = document.createElement('div'); d.innerHTML = html||'';
   return (d.textContent||'').replace(/\s+/g,' ').trim().slice(0,220)+'…';
 }
@@ -390,124 +369,73 @@ function fmtDate(s) {
 function getHost(url) {
   try { return new URL(url).hostname.replace('www.',''); } catch { return ''; }
 }
-function openLink(url) {
+function go(url) {
   if (url && url !== '#') window.open(url,'_blank','noopener,noreferrer');
 }
 
-// ── ЗАГРУЗКА RSS ────────────────────────────────────────────
-// Получаем текст через один из CORS-прокси
-async function fetchViaProxy(rssUrl) {
-  for (const makeProxy of PROXIES) {
-    try {
-      const res = await fetch(makeProxy(rssUrl), {cache:'no-store'});
-      if (!res.ok) continue;
-      const data = await res.json();
-      // allorigins возвращает {contents:...}, codetabs возвращает строку напрямую
-      const xml = data.contents ?? data;
-      if (typeof xml === 'string' && xml.includes('<item>')) return xml;
-    } catch(e) { /* пробуем следующий прокси */ }
-  }
-  return null;
-}
-
-// Парсим RSS XML в массив объектов
-function parseRSS(xmlStr) {
-  try {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(xmlStr, 'text/xml');
-    if (doc.querySelector('parsererror')) return [];
-    return Array.from(doc.querySelectorAll('item')).map(item => {
-      const get = tag => item.querySelector(tag)?.textContent?.trim() || '';
-      // Google News прячет ссылку в guid
-      const link = get('link') || get('guid');
-      return { title: decodeEntities(get('title')), description: decodeEntities(get('description')), link, pubDate: get('pubDate'), author: get('author') };
-    });
-  } catch(e) { return []; }
-}
-
-function decodeEntities(str) {
-  const d = document.createElement('div');
-  d.innerHTML = str;
-  return d.textContent || '';
-}
-
-async function fetchFeed(rssUrl) {
-  const xml = await fetchViaProxy(rssUrl);
-  return xml ? parseRSS(xml) : [];
-}
-
-async function loadNews() {
+// ── ЗАГРУЗКА через Netlify Function ─────────────────────────
+async function loadNews(force = false) {
   const btn = document.getElementById('refreshBtn');
   btn.disabled = true; btn.textContent = '⏳ Загружаю...';
 
-  // Проверяем кеш localStorage
-  try {
-    const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
-    if (cached && (Date.now() - cached.time) < CACHE_TTL) {
-      allItems = cached.items;
-      renderNews(allItems);
-      btn.disabled = false; btn.textContent = '🔄 Обновить новости';
-      return;
-    }
-  } catch(e) {}
+  // localStorage кеш 30 минут
+  if (!force) {
+    try {
+      const c = JSON.parse(localStorage.getItem('etno_cache')||'null');
+      if (c && Date.now() - c.t < 30*60*1000 && c.items.length) {
+        allItems = c.items;
+        renderNews(allItems);
+        btn.disabled = false; btn.textContent = '🔄 Обновить';
+        return;
+      }
+    } catch(e) {}
+  }
 
   document.getElementById('loadingBanner').style.display = 'block';
   document.getElementById('pageMain').style.display = 'none';
   document.getElementById('pageAbout').classList.remove('visible');
   document.getElementById('updatedBar').style.display = 'none';
 
-  let items = [];
-  for (const feed of FEEDS) {
-    try { items = items.concat(await fetchFeed(feed)); } catch(e) {}
-  }
+  try {
+    // Вызываем нашу серверную функцию Netlify
+    const res = await fetch('/.netlify/functions/news');
+    if (!res.ok) throw new Error(`Ошибка сервера: ${res.status}`);
+    const items = await res.json();
+    if (!items.length) throw new Error('Нет данных');
 
-  // Дедупликация и сортировка
-  const seen = new Set();
-  allItems = items
-    .filter(i => { if (!i.title || seen.has(i.title)) return false; seen.add(i.title); return true; })
-    .sort((a,b) => new Date(b.pubDate||0) - new Date(a.pubDate||0))
-    .slice(0, 12);
-
-  if (!allItems.length) {
+    allItems = items;
+    try { localStorage.setItem('etno_cache', JSON.stringify({t: Date.now(), items})); } catch(e) {}
+    renderNews(allItems);
+  } catch(e) {
     document.getElementById('loadingBanner').innerHTML = `
       <p style="color:var(--red);font-size:14px;font-weight:700;">⚠️ Не удалось загрузить новости</p>
-      <small>Проверьте интернет-соединение и попробуйте снова</small><br><br>
-      <button onclick="loadNews()" style="margin-top:12px;background:var(--red);border:none;border-radius:8px;color:#fff;padding:10px 24px;font-family:Montserrat,sans-serif;font-weight:700;cursor:pointer;">🔄 Попробовать снова</button>`;
-    btn.disabled = false; btn.textContent = '🔄 Обновить новости';
-    return;
+      <small>${e.message}</small><br><br>
+      <button onclick="loadNews(true)" style="margin-top:12px;background:var(--red);border:none;border-radius:8px;color:#fff;padding:10px 24px;font-family:Montserrat,sans-serif;font-weight:700;cursor:pointer;">🔄 Попробовать снова</button>`;
   }
-
-  // Сохраняем в кеш
-  try { localStorage.setItem(CACHE_KEY, JSON.stringify({time: Date.now(), items: allItems})); } catch(e) {}
-
-  renderNews(allItems);
-  btn.disabled = false; btn.textContent = '🔄 Обновить новости';
+  btn.disabled = false; btn.textContent = '🔄 Обновить';
 }
 
-// ── РЕНДЕР ─────────────────────────────────────────────────
 function renderNews(items) {
   if (!items.length) return;
   const h = items[0];
-  const hR = getRubrika(h.title + ' ' + (h.description||''));
+  const hR = getRubrika(h.title+' '+(h.description||''));
+  document.getElementById('heroEmoji').textContent    = EMOJIS[hR]||'📰';
+  document.getElementById('heroRubrika').textContent  = hR;
+  document.getElementById('heroTitle').textContent    = h.title;
+  document.getElementById('heroDesc').textContent     = clean(h.description);
+  document.getElementById('heroReadMore').onclick     = () => go(h.link);
+  document.getElementById('heroCard').onclick         = () => go(h.link);
+  document.getElementById('heroSource').textContent   = '📎 Источник: '+(h.author||getHost(h.link));
+  document.getElementById('heroSource').onclick       = () => go(h.link);
+  document.getElementById('heroDate').textContent     = '🕐 '+fmtDate(h.pubDate);
+  document.getElementById('heroAuthor').textContent   = '📰 '+(h.author||getHost(h.link));
 
-  document.getElementById('heroEmoji').textContent   = EMOJIS[hR]||'📰';
-  document.getElementById('heroRubrika').textContent = hR;
-  document.getElementById('heroTitle').textContent   = h.title;
-  document.getElementById('heroDesc').textContent    = cleanDesc(h.description);
-  document.getElementById('heroReadMore').onclick    = () => openLink(h.link);
-  document.getElementById('heroSource').textContent  = '📎 Источник: ' + (h.author||getHost(h.link));
-  document.getElementById('heroSource').onclick      = () => openLink(h.link);
-  document.getElementById('heroCard').onclick        = () => openLink(h.link);
-  document.getElementById('heroDate').textContent    = '🕐 ' + fmtDate(h.pubDate);
-  document.getElementById('heroAuthor').textContent  = '📰 ' + (h.author||getHost(h.link));
-
-  // Сайдбар
   const sb = document.getElementById('sidebar'); sb.innerHTML = '';
   items.slice(1,5).forEach(n => {
-    const r = getRubrika(n.title + ' ' + (n.description||''));
+    const r = getRubrika(n.title+' '+(n.description||''));
     const el = document.createElement('div');
     el.className = 'side-card';
-    el.onclick = () => openLink(n.link);
+    el.onclick = () => go(n.link);
     el.innerHTML = `<div class="side-emoji">${EMOJIS[r]||'📰'}</div>
       <div><div class="side-tag">${r}</div>
       <div class="side-title">${n.title}</div>
@@ -515,18 +443,17 @@ function renderNews(items) {
     sb.appendChild(el);
   });
 
-  // Сетка
   const grid = document.getElementById('grid'); grid.innerHTML = '';
   items.slice(1,7).forEach((n,i) => {
-    const r = getRubrika(n.title + ' ' + (n.description||''));
+    const r = getRubrika(n.title+' '+(n.description||''));
     const el = document.createElement('div');
     el.className = 'card';
-    el.onclick = () => openLink(n.link);
+    el.onclick = () => go(n.link);
     el.innerHTML = `<div class="card-img ${BGCLS[i]}">${EMOJIS[r]||'📰'}</div>
       <div class="card-body">
         <div class="card-tag ${TAGCLS[r]||'t-kultur'}">${r}</div>
         <div class="card-title">${n.title}</div>
-        <div class="card-desc">${cleanDesc(n.description)}</div>
+        <div class="card-desc">${clean(n.description)}</div>
         <div class="card-source">📎 ${n.author||getHost(n.link)}</div>
         <div class="card-meta">🕐 ${fmtDate(n.pubDate)}</div>
       </div>`;
@@ -538,10 +465,9 @@ function renderNews(items) {
   const bar = document.getElementById('updatedBar');
   bar.style.display = 'flex';
   document.getElementById('updatedText').textContent =
-    'Обновлено в ' + new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
+    'Обновлено в '+new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
 }
 
-// ── НАВИГАЦИЯ ───────────────────────────────────────────────
 function showPage(page, btn) {
   if (btn) {
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -551,24 +477,20 @@ function showPage(page, btn) {
   document.getElementById('pageAbout').classList.remove('visible');
   document.getElementById('rubDesc').classList.remove('visible');
 
-  if (page === 'main') {
-    document.getElementById('pageMain').style.display = 'block';
-  } else if (page === 'about') {
+  if (page === 'about') {
     document.getElementById('pageAbout').classList.add('visible');
+  } else if (page === 'main') {
+    renderNews(allItems);
   } else {
-    document.getElementById('pageMain').style.display = 'block';
     const rubName = {kultura:'Культура',prava:'Права',ekolog:'Экология',tradits:'Традиции',region:'Регионы'}[page];
-    if (rubName && RUB_DESCS[rubName]) {
-      const desc = document.getElementById('rubDesc');
-      desc.textContent = RUB_DESCS[rubName];
-      desc.classList.add('visible');
+    if (RUB_DESCS[rubName]) {
+      const d = document.getElementById('rubDesc');
+      d.textContent = RUB_DESCS[rubName]; d.classList.add('visible');
     }
-    const filtered = allItems.filter(i => getRubrika(i.title+' '+(i.description||'')) === rubName);
-    renderNews(filtered.length ? filtered : allItems);
+    renderNews(allItems.filter(i => getRubrika(i.title+' '+(i.description||'')) === rubName));
   }
 }
 
-// ── ИНИЦИАЛИЗАЦИЯ ───────────────────────────────────────────
 document.getElementById('hdate').textContent =
   new Date().toLocaleDateString('ru-RU',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
 
